@@ -84,6 +84,59 @@ export KONNECT_ACCESS_TOKEN=kpat_api_key_here
 export KONNECT_REGION=us
 ```
 
+## Running with Docker (Alternative)
+
+You can also build and run this server using Docker.
+
+### Building the Docker Image
+
+```bash
+docker build -t kong-konnect-mcp .
+```
+
+### Running the Docker Container (Manual / Standalone)
+
+This command runs the Docker container directly from your terminal. This is useful for:
+*   **Testing:** Verifying that the image builds and the server starts correctly.
+*   **Standalone Use:** Running the server independently if needed for other purposes or if you prefer managing it separately.
+
+**Note:** This is *different* from the configuration used by Claude Desktop (see `Usage with Claude` section below). Claude Desktop will manage starting and stopping the container itself based on its configuration.
+
+To run manually:
+```bash
+docker run --rm -i --name kong-mcp-manual \
+  -e KONNECT_ACCESS_TOKEN="kpat_api_key_here" \
+  -e KONNECT_REGION="us" \
+  kong-konnect-mcp
+```
+
+*   `--rm`: Automatically remove the container when it exits.
+*   `-i`: Keep STDIN open even if not attached (necessary for MCP over stdio).
+*   `--name kong-mcp-manual`: Assigns a specific name to the container, making it easier to stop later.
+*   `-e KONNECT_ACCESS_TOKEN="..."`: Sets the required API key.
+*   `-e KONNECT_REGION="..."`: Sets the region (optional, defaults to `us`).
+*   `kong-konnect-mcp`: The name of the image you built.
+
+**Stopping the Manually Run Container:**
+
+If you started the container manually with the `--name` flag as shown above, you can stop it using:
+
+```bash
+docker stop kong-mcp-manual
+```
+
+If you didn't use `--name`, you can list running containers to find its ID or name:
+
+```bash
+docker ps
+```
+
+Then stop it using its Container ID or Name:
+
+```bash
+docker stop <CONTAINER_ID_OR_NAME>
+```
+
 ## Available Tools
 
 The server provides tools organized in three categories:
@@ -210,24 +263,47 @@ To use this MCP server with Claude for Desktop:
    - MacOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
    - Windows: `%APPDATA%\Claude\claude_desktop_config.json`
 
-3. Add the following configuration:
+3. Add **one** of the following configurations, depending on whether you run the server directly with Node or via Docker:
 
-```json
-{
-  "mcpServers": {
-    "kong-konnect": {
-      "command": "node",
-      "args": [
-        "/absolute/path/to/mcp-konnect/build/index.js"
-      ],
-      "env": {
-        "KONNECT_ACCESS_TOKEN": "kpat_api_key_here",
-        "KONNECT_REGION": "us"
+    **Option A: Running directly with Node (after `npm install` and `npm run build`)**
+
+    ```json
+    {
+      "mcpServers": {
+        "kong-konnect": {
+          "command": "node",
+          "args": [
+            "/absolute/path/to/mcp-konnect/build/index.js"
+          ],
+          "env": {
+            "KONNECT_ACCESS_TOKEN": "kpat_api_key_here",
+            "KONNECT_REGION": "us"
+          }
+        }
       }
     }
-  }
-}
-```
+    ```
+    *Ensure you replace `/absolute/path/to/mcp-konnect` with the correct path on your system.*
+
+    **Option B: Running with Docker (after `docker build`)**
+
+    ```json
+    {
+      "mcpServers": {
+        "kong-konnect": {
+          "command": "docker",
+          "args": [
+            "run", "--rm", "-i",
+            "-e", "KONNECT_ACCESS_TOKEN=kpat_api_key_here",
+            "-e", "KONNECT_REGION=us",
+            "kong-konnect-mcp"
+          ],
+          "env": {}
+        }
+      }
+    }
+    ```
+    *Ensure your `KONNECT_ACCESS_TOKEN` is correctly set within the `args` array.*
 
 4. Restart Claude for Desktop
 5. The Kong Konnect tools will now be available for Claude to use
