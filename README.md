@@ -1,5 +1,6 @@
 # Kong Konnect MCP Server
 
+[![smithery badge](https://smithery.ai/badge/@Kong/mcp-konnect-mcp)](https://smithery.ai/server/@Kong/mcp-konnect-mcp)
 ![Static Badge](https://img.shields.io/badge/Release-Tech%20Preview-FFA500?style=plastic)
 
 A Model Context Protocol (MCP) server for interacting with Kong Konnect APIs, allowing AI assistants to query and analyze Kong Gateway configurations, traffic, and analytics.
@@ -51,6 +52,14 @@ src/
 ```
 
 ## Installation
+
+### Installing via Smithery
+
+To install Kong Konnect MCP Server for Claude Desktop automatically via [Smithery](https://smithery.ai/server/@Kong/mcp-konnect-mcp):
+
+```bash
+npx -y @smithery/cli install @Kong/mcp-konnect-mcp --client claude
+```
 
 ### Prerequisites
 - Node.js 20 or higher
