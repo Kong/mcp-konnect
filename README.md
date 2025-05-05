@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/kong-mcp-konnect-badge.png)](https://mseep.ai/app/kong-mcp-konnect)
+
 # Kong Konnect MCP Server
 
 ![Static Badge](https://img.shields.io/badge/Release-Tech%20Preview-FFA500?style=plastic)
