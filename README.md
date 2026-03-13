@@ -1,12 +1,22 @@
+> [!WARNING]
+> ## ⚠️ This Repository is Deprecated
+>
+> **This project is no longer actively maintained and will be archived as read-only.**
+>
+> No further updates, bug fixes, or new features will be made. Issues and pull requests are no longer monitored.
+>
+> If you're looking for Kong Konnect MCP support, please check the [Konnect remote MCP server](https://developer.konghq.com/konnect-platform/konnect-mcp/).
+
+---
+
 # Kong Konnect MCP Server
 
-![Static Badge](https://img.shields.io/badge/Release-Tech%20Preview-FFA500?style=plastic)
+![Static Badge](https://img.shields.io/badge/Status-Deprecated-red?style=plastic)
+![Static Badge](https://img.shields.io/badge/Maintenance-None-lightgrey?style=plastic)
+
+> **Note:** This repository is deprecated and will soon be archived as read-only. See the notice above for details.
 
 A Model Context Protocol (MCP) server for interacting with Kong Konnect APIs, allowing AI assistants to query and analyze Kong Gateway configurations, traffic, and analytics.
-
-
-https://github.com/user-attachments/assets/19c2f716-49b5-46c3-9457-65b3784e2111
-
 
 ## Table of Contents
 - [Overview](#overview)
@@ -24,6 +34,8 @@ https://github.com/user-attachments/assets/19c2f716-49b5-46c3-9457-65b3784e2111
 
 ## Overview
 
+> **⚠️ Deprecated:** This project is no longer maintained. The information below is preserved for reference only.
+
 This project provides a Model Context Protocol (MCP) server that enables AI assistants like Claude to interact with Kong Konnect's API Gateway. It offers a set of tools to query analytics data, inspect configuration details, and manage control planes through natural language conversation.
 
 Key features:
@@ -31,8 +43,6 @@ Key features:
 - List and inspect gateway services, routes, consumers, and plugins
 - Manage control planes and control plane groups
 - Integration with Claude and other MCP-compatible AI assistants
-
-Konnect MCP is a **work in progress** and we will be adding additional functionality and improvements with each release.
 
 ## Project Structure
 
@@ -51,6 +61,8 @@ src/
 ```
 
 ## Installation
+
+> **Note:** As this project is deprecated, no support is provided for installation issues.
 
 ### Prerequisites
 - Node.js 20 or higher
@@ -203,6 +215,8 @@ Inputs:
 
 ## Usage with Claude
 
+> **Note:** This configuration is provided for historical reference. No support is available for setup issues.
+
 To use this MCP server with Claude for Desktop:
 
 1. Install [Claude for Desktop](https://claude.ai/download)
@@ -270,15 +284,11 @@ To use this MCP server with Claude for Desktop:
 
 ## Development
 
-### Adding New Tools
-
-1. Define the parameters in `parameters.ts`
-2. Add documentation in `prompts.ts`
-3. Create the operation logic in the appropriate file in `operations/`
-4. Register the tool in `tools.ts`
-5. Handle the tool execution in `index.ts`
+> **⚠️ This project is no longer accepting contributions.** The repository will be archived as read-only. Pull requests and issues will not be reviewed or merged.
 
 ## Troubleshooting
+
+> **Note:** No support is provided for this deprecated project. The information below is preserved for reference only.
 
 ### Common Issues
 
@@ -298,4 +308,4 @@ To use this MCP server with Claude for Desktop:
 
 ## Credits
 
-Built by Kong. Inspired by Stripe's [Agent Toolkit](https://github.com/stripe/agent-toolkit).
+Built by Kong. Originally inspired by Stripe's [Agent Toolkit](https://github.com/stripe/agent-toolkit).
