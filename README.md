@@ -81,6 +81,9 @@ npm install
 
 # Build the project
 npm run build
+
+# To start the mcp server
+npm run start
 ```
 
 ## Configuration
