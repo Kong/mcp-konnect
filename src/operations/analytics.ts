@@ -1,5 +1,17 @@
 import { KongApi } from "../api.js";
 import { ApiRequestFilter } from "../types.js";
+import { normalizeUntrustedText } from "../untrustedText.js";
+
+const QUERY_API_REQUESTS_UNTRUSTED_FIELDS = [
+  "requests[].uri",
+  "requests[].headers.host",
+  "requests[].headers.userAgent",
+  "requests[].upstreamUri"
+];
+
+const GET_CONSUMER_REQUESTS_UNTRUSTED_FIELDS = [
+  "requests[].uri"
+];
 
 /**
  * Standard response time formatter for consistent formatting
@@ -95,13 +107,15 @@ export async function queryApiRequests(
           start: result.meta.time_range.start,
           end: result.meta.time_range.end,
         },
-        filters: filters
+        filters: filters,
+        untrustedFields: QUERY_API_REQUESTS_UNTRUSTED_FIELDS,
+        untrustedFieldTrust: "untrusted_external_input"
       },
       requests: result.results.map(req => ({
         requestId: req.request_id,
         timestamp: req.request_start,
         httpMethod: req.http_method,
-        uri: req.request_uri,
+        uri: normalizeUntrustedText(req.request_uri),
         statusCode: req.status_code || req.response_http_status,
         consumerId: req.consumer,
         serviceId: req.gateway_service,
@@ -117,8 +131,8 @@ export async function queryApiRequests(
         applicationId: req.application,
         authType: req.auth_type,
         headers: {
-          host: req.header_host,
-          userAgent: req.header_user_agent
+          host: normalizeUntrustedText(req.header_host),
+          userAgent: normalizeUntrustedText(req.header_user_agent)
         },
         dataPlane: {
           nodeId: req.data_plane_node,
@@ -177,7 +191,7 @@ export async function queryApiRequests(
           contentLength: req.response_header_content_length
         },
         traceId: req.trace_id,
-        upstreamUri: req.upstream_uri,
+        upstreamUri: normalizeUntrustedText(req.upstream_uri),
         upstreamStatus: req.upstream_status,
         recommendations: [
           "Use 'get-consumer-requests' tool with consumerId from top failing consumers for more details",
@@ -276,7 +290,9 @@ export async function getConsumerRequests(
         filters: {
           successOnly,
           failureOnly
-        }
+        },
+        untrustedFields: GET_CONSUMER_REQUESTS_UNTRUSTED_FIELDS,
+        untrustedFieldTrust: "untrusted_external_input"
       },
       statistics: {
         averageLatencyMs: parseFloat(avgLatency.toFixed(2)),
@@ -299,7 +315,7 @@ export async function getConsumerRequests(
       requests: result.results.map(req => ({
         timestamp: req.request_start,
         httpMethod: req.http_method,
-        uri: req.request_uri,
+        uri: normalizeUntrustedText(req.request_uri),
         statusCode: req.status_code || req.response_http_status,
         serviceId: req.gateway_service,
         routeId: req.route,
