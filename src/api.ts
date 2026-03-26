@@ -4,6 +4,12 @@ import {
   TimeRange, 
   ApiRequestsResponse 
 } from "./types.js";
+import {
+  buildControlPlaneCoreEntitiesEndpoint,
+  buildControlPlaneEndpoint,
+  buildControlPlaneGroupMemberStatusEndpoint,
+  buildControlPlaneGroupMembershipsEndpoint
+} from "./apiPaths.js";
 
 /**
  * Kong API Regions - Different geographical API endpoints 
@@ -131,26 +137,20 @@ export class KongApi {
   }
 
   async getControlPlane(controlPlaneId: string): Promise<any> {
-    return this.kongRequest<any>(`/control-planes/${controlPlaneId}`);
+    return this.kongRequest<any>(buildControlPlaneEndpoint(controlPlaneId));
   }
 
   async listControlPlaneGroupMemberships(groupId: string, pageSize = 10, pageAfter?: string): Promise<any> {
-    let endpoint = `/control-planes/${groupId}/group-memberships?page[size]=${pageSize}`;
-
-    if (pageAfter) {
-      endpoint += `&page[after]=${pageAfter}`;
-    }
-
-    return this.kongRequest<any>(endpoint);
+    return this.kongRequest<any>(buildControlPlaneGroupMembershipsEndpoint(groupId, pageSize, pageAfter));
   }
 
   async checkControlPlaneGroupMembership(controlPlaneId: string): Promise<any> {
-    return this.kongRequest<any>(`/control-planes/${controlPlaneId}/group-member-status`);
+    return this.kongRequest<any>(buildControlPlaneGroupMemberStatusEndpoint(controlPlaneId));
   }
 
   // Configuration API methods
   async listServices(controlPlaneId: string, size = 100, offset?: string): Promise<any> {
-    let endpoint = `/control-planes/${controlPlaneId}/core-entities/services?size=${size}`;
+    let endpoint = `${buildControlPlaneCoreEntitiesEndpoint(controlPlaneId, "services")}?size=${size}`;
     
     if (offset) {
       endpoint += `&offset=${offset}`;
@@ -160,7 +160,7 @@ export class KongApi {
   }
 
   async listRoutes(controlPlaneId: string, size = 100, offset?: string): Promise<any> {
-    let endpoint = `/control-planes/${controlPlaneId}/core-entities/routes?size=${size}`;
+    let endpoint = `${buildControlPlaneCoreEntitiesEndpoint(controlPlaneId, "routes")}?size=${size}`;
     
     if (offset) {
       endpoint += `&offset=${offset}`;
@@ -170,7 +170,7 @@ export class KongApi {
   }
 
   async listConsumers(controlPlaneId: string, size = 100, offset?: string): Promise<any> {
-    let endpoint = `/control-planes/${controlPlaneId}/core-entities/consumers?size=${size}`;
+    let endpoint = `${buildControlPlaneCoreEntitiesEndpoint(controlPlaneId, "consumers")}?size=${size}`;
     
     if (offset) {
       endpoint += `&offset=${offset}`;
@@ -180,7 +180,7 @@ export class KongApi {
   }
 
   async listPlugins(controlPlaneId: string, size = 100, offset?: string): Promise<any> {
-    let endpoint = `/control-planes/${controlPlaneId}/core-entities/plugins?size=${size}`;
+    let endpoint = `${buildControlPlaneCoreEntitiesEndpoint(controlPlaneId, "plugins")}?size=${size}`;
     
     if (offset) {
       endpoint += `&offset=${offset}`;
