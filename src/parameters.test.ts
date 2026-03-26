@@ -48,3 +48,9 @@ test("validated control plane schema returns a clear UUID validation error", () 
   assert.equal(result.success, false);
   assert.match(result.error.issues[0]?.message ?? "", /valid UUIDs/i);
 });
+
+test("listPluginsParameters defaults includeRawConfig to false", () => {
+  const result = listPluginsParameters().parse({ controlPlaneId: VALID_ID });
+
+  assert.equal(result.includeRawConfig, false);
+});

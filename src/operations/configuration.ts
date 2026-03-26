@@ -156,7 +156,8 @@ export async function listPlugins(
   api: KongApi,
   controlPlaneId: string,
   size = 100,
-  offset?: string
+  offset?: string,
+  includeRawConfig = false
 ) {
   try {
     const result = await api.listPlugins(controlPlaneId, size, offset);
@@ -168,26 +169,50 @@ export async function listPlugins(
         size: size,
         offset: offset || null,
         nextOffset: result.offset,
-        totalCount: result.total
+        totalCount: result.total,
+        includeRawConfig,
+        warnings: includeRawConfig
+          ? [
+              "Raw plugin config is included because includeRawConfig was explicitly enabled. Plugin configuration may contain sensitive values."
+            ]
+          : []
       },
-      plugins: result.data.map((plugin: any) => ({
-        pluginId: plugin.id,
-        name: plugin.name,
-        enabled: plugin.enabled,
-        config: plugin.config,
-        protocols: plugin.protocols,
-        tags: plugin.tags,
-        scoping: {
-          consumerId: plugin.consumer?.id,
-          serviceId: plugin.service?.id,
-          routeId: plugin.route?.id,
-          global: (!plugin.consumer && !plugin.service && !plugin.route)
-        },
-        metadata: {
-          createdAt: plugin.created_at,
-          updatedAt: plugin.updated_at
+      plugins: result.data.map((plugin: any) => {
+        const basePlugin = {
+          pluginId: plugin.id,
+          name: plugin.name,
+          enabled: plugin.enabled,
+          protocols: plugin.protocols,
+          tags: plugin.tags,
+          scoping: {
+            consumerId: plugin.consumer?.id,
+            serviceId: plugin.service?.id,
+            routeId: plugin.route?.id,
+            global: (!plugin.consumer && !plugin.service && !plugin.route)
+          },
+          metadata: {
+            createdAt: plugin.created_at,
+            updatedAt: plugin.updated_at
+          }
+        };
+
+        if (includeRawConfig) {
+          return {
+            ...basePlugin,
+            configIncluded: true,
+            config: plugin.config
+          };
         }
-      })),
+
+        const config = plugin.config && typeof plugin.config === "object" ? plugin.config : {};
+
+        return {
+          ...basePlugin,
+          configIncluded: false,
+          configKeys: Object.keys(config),
+          configEntryCount: Object.keys(config).length
+        };
+      }),
       relatedTools: [
         "Use list-services and list-routes to find entities these plugins are applied to",
         "Use query-api-requests to analyze traffic affected by these plugins"

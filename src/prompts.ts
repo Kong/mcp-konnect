@@ -128,14 +128,18 @@ INPUT:
   - controlPlaneId: String - ID of the control plane
   - size: Number - Number of plugins to return (1-1000, default: 100)
   - offset: String (optional) - Pagination offset token from previous response
+  - includeRawConfig: Boolean - Set to true to include raw plugin configuration values. Defaults to false because configuration may contain sensitive data.
 
 OUTPUT:
-  - metadata: Object - Contains controlPlaneId, size, offset, nextOffset, totalCount
+  - metadata: Object - Contains controlPlaneId, size, offset, nextOffset, totalCount, and raw-config warnings when applicable
   - plugins: Array - List of plugins with details for each including:
     - pluginId: String - Unique identifier for the plugin
     - name: String - Name of the plugin (e.g., rate-limiting, cors, etc.)
     - enabled: Boolean - Whether the plugin is enabled
-    - config: Object - Plugin-specific configuration
+    - configIncluded: Boolean - Whether raw config values were included
+    - configKeys: Array - Returned by default to summarize configuration without exposing raw values
+    - configEntryCount: Number - Returned by default to summarize configuration size
+    - config: Object - Raw plugin-specific configuration, only when includeRawConfig is explicitly true
     - protocols: Array - Protocols this plugin applies to
     - tags: Array - Tags associated with the plugin
     - scoping: Object - Defines plugin scope including:
@@ -145,6 +149,8 @@ OUTPUT:
       - global: Boolean - Whether this is a global plugin
     - metadata: Object - Creation and update timestamps
   - relatedTools: Array - List of related tools for plugin configuration
+
+Raw config is excluded by default. Only enable includeRawConfig when you specifically need full plugin configuration and understand that it may contain sensitive values.
 `;
 
 export const listControlPlanesPrompt = () => `

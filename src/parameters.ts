@@ -112,6 +112,9 @@ export const listPluginsParameters = () => z.object({
   offset: z.string()
     .optional()
     .describe("Offset token for pagination (from previous response)"),
+  includeRawConfig: z.boolean()
+    .default(false)
+    .describe("Include raw plugin configuration values. Disabled by default because configuration may contain sensitive data."),
 });
 
 // =========================
