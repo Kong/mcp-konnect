@@ -5,7 +5,7 @@ import {
   ApiRequestsResponse 
 } from "./types.js";
 import {
-  buildControlPlaneCoreEntitiesEndpoint,
+  buildControlPlaneCoreEntitiesListEndpoint,
   buildControlPlaneEndpoint,
   buildControlPlaneGroupMemberStatusEndpoint,
   buildControlPlaneGroupMembershipsEndpoint
@@ -150,42 +150,18 @@ export class KongApi {
 
   // Configuration API methods
   async listServices(controlPlaneId: string, size = 100, offset?: string): Promise<any> {
-    let endpoint = `${buildControlPlaneCoreEntitiesEndpoint(controlPlaneId, "services")}?size=${size}`;
-    
-    if (offset) {
-      endpoint += `&offset=${offset}`;
-    }
-
-    return this.kongRequest<any>(endpoint);
+    return this.kongRequest<any>(buildControlPlaneCoreEntitiesListEndpoint(controlPlaneId, "services", size, offset));
   }
 
   async listRoutes(controlPlaneId: string, size = 100, offset?: string): Promise<any> {
-    let endpoint = `${buildControlPlaneCoreEntitiesEndpoint(controlPlaneId, "routes")}?size=${size}`;
-    
-    if (offset) {
-      endpoint += `&offset=${offset}`;
-    }
-
-    return this.kongRequest<any>(endpoint);
+    return this.kongRequest<any>(buildControlPlaneCoreEntitiesListEndpoint(controlPlaneId, "routes", size, offset));
   }
 
   async listConsumers(controlPlaneId: string, size = 100, offset?: string): Promise<any> {
-    let endpoint = `${buildControlPlaneCoreEntitiesEndpoint(controlPlaneId, "consumers")}?size=${size}`;
-    
-    if (offset) {
-      endpoint += `&offset=${offset}`;
-    }
-
-    return this.kongRequest<any>(endpoint);
+    return this.kongRequest<any>(buildControlPlaneCoreEntitiesListEndpoint(controlPlaneId, "consumers", size, offset));
   }
 
   async listPlugins(controlPlaneId: string, size = 100, offset?: string): Promise<any> {
-    let endpoint = `${buildControlPlaneCoreEntitiesEndpoint(controlPlaneId, "plugins")}?size=${size}`;
-    
-    if (offset) {
-      endpoint += `&offset=${offset}`;
-    }
-
-    return this.kongRequest<any>(endpoint);
+    return this.kongRequest<any>(buildControlPlaneCoreEntitiesListEndpoint(controlPlaneId, "plugins", size, offset));
   }
 }
