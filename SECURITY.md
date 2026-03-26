@@ -19,14 +19,6 @@ At Kong, we take security issues very seriously. If you believe you have found a
 - **Investigation**: Our security team will investigate the report and will keep you informed of the progress. We aim to resolve critical vulnerabilities within 30 days of confirmation.
 - **Disclosure**: We prefer coordinated disclosure and will work with you to schedule the disclosure of the vulnerability in a way that minimizes the risk to users.
 
-## Bug Bounty Program
-
-We encourage security researchers to participate in our bug bounty program as outlined on the [Kong Vulnerability Disclosure](https://konghq.com/compliance/bug-bounty) page. This program provides rewards for discovering and reporting security vulnerabilities in accordance with our disclosure guidelines.
-
-Thank you for helping to keep Kong secure.
-
-For more information on our security policies and guidelines, please visit the [Kong Vulnerability Disclosure](https://konghq.com/compliance/bug-bounty) page.
-
 ## Contact
 
 For any questions or further assistance, please contact us at [vulnerability@konghq.com](mailto:vulnerability@konghq.com).
