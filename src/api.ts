@@ -25,21 +25,45 @@ export const API_REGIONS = {
 export interface KongApiOptions {
   apiKey?: string;
   apiRegion?: string;
+  requestTimeoutMs?: number;
 }
 
 export class KongApi {
   private baseUrl: string;
   private apiKey: string;
+  private requestTimeoutMs: number;
 
   constructor(options: KongApiOptions = {}) {
     // Default to US region if not specified
     const apiRegion = options.apiRegion || process.env.KONNECT_REGION || API_REGIONS.US;
     this.baseUrl = `https://${apiRegion}.api.konghq.com/v2`;
     this.apiKey = options.apiKey || process.env.KONNECT_ACCESS_TOKEN || "";
+    this.requestTimeoutMs = this.resolveRequestTimeoutMs(options.requestTimeoutMs);
 
     if (!this.apiKey) {
       console.error("Warning: KONNECT_ACCESS_TOKEN not set in environment. API calls will fail.");
     }
+  }
+
+  private resolveRequestTimeoutMs(explicitTimeoutMs?: number): number {
+    if (explicitTimeoutMs !== undefined) {
+      return explicitTimeoutMs;
+    }
+
+    const configuredTimeout = process.env.KONNECT_REQUEST_TIMEOUT_MS;
+
+    if (!configuredTimeout) {
+      return 30000;
+    }
+
+    const parsedTimeout = Number.parseInt(configuredTimeout, 10);
+
+    if (!Number.isFinite(parsedTimeout) || parsedTimeout <= 0) {
+      console.error("Warning: KONNECT_REQUEST_TIMEOUT_MS must be a positive integer. Falling back to 30000ms.");
+      return 30000;
+    }
+
+    return parsedTimeout;
   }
 
   /**
@@ -60,6 +84,7 @@ export class KongApi {
         method,
         url,
         headers,
+        timeout: this.requestTimeoutMs,
         data: data ? data : undefined,
       };
 
@@ -81,6 +106,8 @@ export class KongApi {
         }
 
         throw new Error(errorMessage);
+      } else if (error.code === "ECONNABORTED") {
+        throw new Error(`Request timed out after ${this.requestTimeoutMs}ms while calling the Kong API.`);
       } else if (error.request) {
         throw new Error("Network Error: No response received from Kong API. Please check your network connection and API endpoint configuration.");
       } else {
