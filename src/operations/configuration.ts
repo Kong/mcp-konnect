@@ -1,5 +1,13 @@
 import { KongApi } from "../api.js";
 
+const ALLOW_RAW_PLUGIN_CONFIG_ENV = "KONNECT_ALLOW_RAW_PLUGIN_CONFIG";
+
+function isRawPluginConfigAllowedByServerPolicy(): boolean {
+  const configuredValue = process.env[ALLOW_RAW_PLUGIN_CONFIG_ENV]?.trim().toLowerCase();
+
+  return configuredValue === "1" || configuredValue === "true";
+}
+
 /**
  * List services for a specific control plane
  */
@@ -161,6 +169,21 @@ export async function listPlugins(
 ) {
   try {
     const result = await api.listPlugins(controlPlaneId, size, offset);
+    const rawConfigAllowedByServerPolicy = isRawPluginConfigAllowedByServerPolicy();
+    const includeRawConfigInResponse = rawConfigAllowedByServerPolicy && includeRawConfig;
+    const warnings: string[] = [];
+
+    if (includeRawConfig && !rawConfigAllowedByServerPolicy) {
+      warnings.push(
+        `Raw plugin config was requested but is disabled by server policy. Set ${ALLOW_RAW_PLUGIN_CONFIG_ENV}=true to allow raw plugin config responses.`
+      );
+    }
+
+    if (includeRawConfigInResponse) {
+      warnings.push(
+        "Raw plugin config is included because includeRawConfig was explicitly enabled and server policy allows it. Plugin configuration may contain sensitive values."
+      );
+    }
 
     // Transform the response to have consistent field names
     return {
@@ -170,12 +193,10 @@ export async function listPlugins(
         offset: offset || null,
         nextOffset: result.offset,
         totalCount: result.total,
-        includeRawConfig,
-        warnings: includeRawConfig
-          ? [
-              "Raw plugin config is included because includeRawConfig was explicitly enabled. Plugin configuration may contain sensitive values."
-            ]
-          : []
+        includeRawConfigRequested: includeRawConfig,
+        rawConfigAllowedByServerPolicy,
+        includeRawConfig: includeRawConfigInResponse,
+        warnings
       },
       plugins: result.data.map((plugin: any) => {
         const basePlugin = {
@@ -196,7 +217,7 @@ export async function listPlugins(
           }
         };
 
-        if (includeRawConfig) {
+        if (includeRawConfigInResponse) {
           return {
             ...basePlugin,
             configIncluded: true,
