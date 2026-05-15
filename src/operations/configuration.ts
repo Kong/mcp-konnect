@@ -1,5 +1,13 @@
 import { KongApi } from "../api.js";
 
+const ALLOW_RAW_PLUGIN_CONFIG_ENV = "KONNECT_ALLOW_RAW_PLUGIN_CONFIG";
+
+function isRawPluginConfigAllowedByServerPolicy(): boolean {
+  const configuredValue = process.env[ALLOW_RAW_PLUGIN_CONFIG_ENV]?.trim().toLowerCase();
+
+  return configuredValue === "1" || configuredValue === "true";
+}
+
 /**
  * List services for a specific control plane
  */
@@ -156,10 +164,26 @@ export async function listPlugins(
   api: KongApi,
   controlPlaneId: string,
   size = 100,
-  offset?: string
+  offset?: string,
+  includeRawConfig = false
 ) {
   try {
     const result = await api.listPlugins(controlPlaneId, size, offset);
+    const rawConfigAllowedByServerPolicy = isRawPluginConfigAllowedByServerPolicy();
+    const includeRawConfigInResponse = rawConfigAllowedByServerPolicy && includeRawConfig;
+    const warnings: string[] = [];
+
+    if (includeRawConfig && !rawConfigAllowedByServerPolicy) {
+      warnings.push(
+        `Raw plugin config was requested but is disabled by server policy. Set ${ALLOW_RAW_PLUGIN_CONFIG_ENV}=true to allow raw plugin config responses.`
+      );
+    }
+
+    if (includeRawConfigInResponse) {
+      warnings.push(
+        "Raw plugin config is included because includeRawConfig was explicitly enabled and server policy allows it. Plugin configuration may contain sensitive values."
+      );
+    }
 
     // Transform the response to have consistent field names
     return {
@@ -168,26 +192,48 @@ export async function listPlugins(
         size: size,
         offset: offset || null,
         nextOffset: result.offset,
-        totalCount: result.total
+        totalCount: result.total,
+        includeRawConfigRequested: includeRawConfig,
+        rawConfigAllowedByServerPolicy,
+        includeRawConfig: includeRawConfigInResponse,
+        warnings
       },
-      plugins: result.data.map((plugin: any) => ({
-        pluginId: plugin.id,
-        name: plugin.name,
-        enabled: plugin.enabled,
-        config: plugin.config,
-        protocols: plugin.protocols,
-        tags: plugin.tags,
-        scoping: {
-          consumerId: plugin.consumer?.id,
-          serviceId: plugin.service?.id,
-          routeId: plugin.route?.id,
-          global: (!plugin.consumer && !plugin.service && !plugin.route)
-        },
-        metadata: {
-          createdAt: plugin.created_at,
-          updatedAt: plugin.updated_at
+      plugins: result.data.map((plugin: any) => {
+        const basePlugin = {
+          pluginId: plugin.id,
+          name: plugin.name,
+          enabled: plugin.enabled,
+          protocols: plugin.protocols,
+          tags: plugin.tags,
+          scoping: {
+            consumerId: plugin.consumer?.id,
+            serviceId: plugin.service?.id,
+            routeId: plugin.route?.id,
+            global: (!plugin.consumer && !plugin.service && !plugin.route)
+          },
+          metadata: {
+            createdAt: plugin.created_at,
+            updatedAt: plugin.updated_at
+          }
+        };
+
+        if (includeRawConfigInResponse) {
+          return {
+            ...basePlugin,
+            configIncluded: true,
+            config: plugin.config
+          };
         }
-      })),
+
+        const config = plugin.config && typeof plugin.config === "object" ? plugin.config : {};
+
+        return {
+          ...basePlugin,
+          configIncluded: false,
+          configKeys: Object.keys(config),
+          configEntryCount: Object.keys(config).length
+        };
+      }),
       relatedTools: [
         "Use list-services and list-routes to find entities these plugins are applied to",
         "Use query-api-requests to analyze traffic affected by these plugins"

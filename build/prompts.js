@@ -28,7 +28,6 @@ OUTPUT:
     - clientIp: String - IP address of the client
     - and many more detailed fields...
 `;
-
 export const getConsumerRequestsPrompt = () => `
 Retrieve and analyze API requests made by a specific consumer.
 
@@ -48,7 +47,6 @@ OUTPUT:
     - serviceDistribution: Array - Breakdown of requests by service
   - requests: Array - List of requests with details for each request
 `;
-
 export const listServicesPrompt = () => `
 List all services associated with a control plane.
 
@@ -75,7 +73,6 @@ OUTPUT:
     - metadata: Object - Creation and update timestamps
   - relatedTools: Array - List of related tools for further analysis
 `;
-
 export const listRoutesPrompt = () => `
 List all routes associated with a control plane.
 
@@ -100,7 +97,6 @@ OUTPUT:
     - metadata: Object - Creation and update timestamps
   - relatedTools: Array - List of related tools for further analysis
 `;
-
 export const listConsumersPrompt = () => `
 List all consumers associated with a control plane.
 
@@ -120,7 +116,6 @@ OUTPUT:
     - metadata: Object - Creation and update timestamps
   - relatedTools: Array - List of related tools for consumer analysis
 `;
-
 export const listPluginsPrompt = () => `
 List all plugins associated with a control plane.
 
@@ -152,7 +147,6 @@ OUTPUT:
 
 Raw config is excluded by default. Raw config is only returned when includeRawConfig is explicitly true and the server is configured with KONNECT_ALLOW_RAW_PLUGIN_CONFIG=true. Even then, plugin configuration may contain sensitive values.
 `;
-
 export const listControlPlanesPrompt = () => `
 List all control planes in your organization.
 
@@ -180,7 +174,6 @@ OUTPUT:
     - metadata: Object - Creation and update timestamps
   - usage: Object - Information about how to use these results
 `;
-
 export const getControlPlanePrompt = () => `
 Get detailed information about a specific control plane.
 
@@ -201,7 +194,6 @@ OUTPUT:
     - metadata: Object - Creation and update timestamps
   - relatedTools: Array - List of related tools for further analysis
 `;
-
 export const listControlPlaneGroupMembershipsPrompt = () => `
 List all control planes that are members of a specific control plane group.
 
@@ -225,7 +217,6 @@ OUTPUT:
     - metadata: Object - Creation and update timestamps
   - relatedTools: Array - List of related tools for group management
 `;
-
 export const checkControlPlaneGroupMembershipPrompt = () => `
 Check if a control plane is a member of any group.
 

@@ -1,0 +1,11 @@
+[tasks.build]
+description = "Compile TypeScript into the committed build directory"
+run = "npm run build"
+
+[tasks.test]
+description = "Build and run the test suite"
+run = "npm test"
+
+[tasks.run]
+description = "Build and start the MCP server"
+run = "npm run build && npm run start"

@@ -103,7 +103,8 @@ class KongKonnectMcpServer extends McpServer {
                   this.api,
                   args.controlPlaneId,
                   args.size,
-                  args.offset
+                  args.offset,
+                  args.includeRawConfig
                 );
                 break;
 

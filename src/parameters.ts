@@ -19,6 +19,9 @@ export const pageSizeSchema = z.number().int()
   .default(100)
   .describe("Number of items to return per page");
 
+export const controlPlaneIdSchema = z.string()
+  .uuid("Control plane identifiers must be valid UUIDs");
+
 // =========================
 // API Requests Analytics Schemas
 // =========================
@@ -64,7 +67,7 @@ export const getConsumerRequestsParameters = () => z.object({
 // =========================
 
 export const listServicesParameters = () => z.object({
-  controlPlaneId: z.string()
+  controlPlaneId: controlPlaneIdSchema
     .describe("Control Plane ID (obtainable from list-control-planes tool)"),
   size: z.number().int()
     .min(1).max(1000)
@@ -76,7 +79,7 @@ export const listServicesParameters = () => z.object({
 });
 
 export const listRoutesParameters = () => z.object({
-  controlPlaneId: z.string()
+  controlPlaneId: controlPlaneIdSchema
     .describe("Control Plane ID (obtainable from list-control-planes tool)"),
   size: z.number().int()
     .min(1).max(1000)
@@ -88,7 +91,7 @@ export const listRoutesParameters = () => z.object({
 });
 
 export const listConsumersParameters = () => z.object({
-  controlPlaneId: z.string()
+  controlPlaneId: controlPlaneIdSchema
     .describe("Control Plane ID (obtainable from list-control-planes tool)"),
   size: z.number().int()
     .min(1).max(1000)
@@ -100,7 +103,7 @@ export const listConsumersParameters = () => z.object({
 });
 
 export const listPluginsParameters = () => z.object({
-  controlPlaneId: z.string()
+  controlPlaneId: controlPlaneIdSchema
     .describe("Control Plane ID (obtainable from list-control-planes tool)"),
   size: z.number().int()
     .min(1).max(1000)
@@ -109,6 +112,9 @@ export const listPluginsParameters = () => z.object({
   offset: z.string()
     .optional()
     .describe("Offset token for pagination (from previous response)"),
+  includeRawConfig: z.boolean()
+    .default(false)
+    .describe("Include raw plugin configuration values. Disabled by default because configuration may contain sensitive data."),
 });
 
 // =========================
@@ -142,12 +148,12 @@ export const listControlPlanesParameters = () => z.object({
 });
 
 export const getControlPlaneParameters = () => z.object({
-  controlPlaneId: z.string()
+  controlPlaneId: controlPlaneIdSchema
     .describe("Control Plane ID (obtainable from list-control-planes tool)"),
 });
 
 export const listControlPlaneGroupMembershipsParameters = () => z.object({
-  groupId: z.string()
+  groupId: controlPlaneIdSchema
     .describe("Control plane group ID (the ID of the control plane that acts as the group)"),
   pageSize: z.number().int()
     .min(1).max(1000)
@@ -159,6 +165,6 @@ export const listControlPlaneGroupMembershipsParameters = () => z.object({
 });
 
 export const checkControlPlaneGroupMembershipParameters = () => z.object({
-  controlPlaneId: z.string()
+  controlPlaneId: controlPlaneIdSchema
     .describe("Control plane ID to check (can be obtained from list-control-planes tool)"),
 });

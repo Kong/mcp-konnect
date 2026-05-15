@@ -47,6 +47,7 @@ Key features:
 ## Project Structure
 
 ```
+build/                    # Committed compiled JavaScript output used by the release/distribution flow
 src/
 ├── index.ts              # Main entry point
 ├── api.ts                # Kong API client
@@ -79,9 +80,14 @@ cd mcp-konnect
 # Install dependencies
 npm install
 
-# Build the project
+# Run the test suite (also rebuilds compiled output)
+npm test
+
+# Rebuild the committed build artifacts after changing src/
 npm run build
 ```
+
+The repository includes committed files under `build/` as part of its distribution model. If you modify files in `src/`, regenerate `build/` before committing or publishing changes.
 
 ## Configuration
 
@@ -136,7 +142,7 @@ List all services associated with a control plane.
 
 ```
 Inputs:
-- controlPlaneId: ID of the control plane
+- controlPlaneId: Control plane ID
 - size: Number of services to return
 - offset: Pagination offset token
 ```
@@ -146,7 +152,7 @@ List all routes associated with a control plane.
 
 ```
 Inputs:
-- controlPlaneId: ID of the control plane
+- controlPlaneId: Control plane ID
 - size: Number of routes to return
 - offset: Pagination offset token
 ```
@@ -156,7 +162,7 @@ List all consumers associated with a control plane.
 
 ```
 Inputs:
-- controlPlaneId: ID of the control plane
+- controlPlaneId: Control plane ID
 - size: Number of consumers to return
 - offset: Pagination offset token
 ```
@@ -166,9 +172,10 @@ List all plugins associated with a control plane.
 
 ```
 Inputs:
-- controlPlaneId: ID of the control plane
+- controlPlaneId: Control plane ID
 - size: Number of plugins to return
 - offset: Pagination offset token
+- includeRawConfig: Set to true to include raw plugin configuration values (defaults to false)
 ```
 
 ### Control Planes Tools
@@ -192,7 +199,7 @@ Get detailed information about a specific control plane.
 
 ```
 Inputs:
-- controlPlaneId: ID of the control plane to retrieve
+- controlPlaneId: Control plane ID to retrieve
 ```
 
 #### List Control Plane Group Memberships
@@ -257,7 +264,7 @@ To use this MCP server with Claude for Desktop:
 
 2. Then, list services for a specific control plane:
    ```
-   List all services for control plane [CONTROL_PLANE_NAME/ID].
+   List all services for control plane [CONTROL_PLANE_ID].
    ```
    
 3. Query API requests for a specific service:
@@ -269,7 +276,7 @@ To use this MCP server with Claude for Desktop:
 
 1. List consumers for a control plane:
    ```
-   List all consumers for control plane [CONTROL_PLANE_NAME/ID].
+   List all consumers for control plane [CONTROL_PLANE_ID].
    ```
 
 2. Analyze requests for a specific consumer:
@@ -285,6 +292,11 @@ To use this MCP server with Claude for Desktop:
 ## Development
 
 > **⚠️ This project is no longer accepting contributions.** The repository will be archived as read-only. Pull requests and issues will not be reviewed or merged.
+
+Historical development notes:
+
+- `npm test` runs the TypeScript build and the repository test suite.
+- `build/` is a committed generated artifact in this repository and should be regenerated with `npm run build` after changes to `src/`.
 
 ## Troubleshooting
 
