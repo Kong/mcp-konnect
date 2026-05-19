@@ -85,6 +85,9 @@ npm test
 
 # Rebuild the committed build artifacts after changing src/
 npm run build
+
+# To start the mcp server
+npm run start
 ```
 
 The repository includes committed files under `build/` as part of its distribution model. If you modify files in `src/`, regenerate `build/` before committing or publishing changes.
