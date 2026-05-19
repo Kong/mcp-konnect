@@ -1,6 +1,5 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { RequestHandlerExtra } from "@modelcontextprotocol/sdk/shared/protocol.js";
 import { tools } from "./tools.js";
 import { KongApi, API_REGIONS } from "./api.js";
 import * as analytics from "./operations/analytics.js";
@@ -34,11 +33,13 @@ class KongKonnectMcpServer extends McpServer {
     const allTools = tools();
 
     allTools.forEach(tool => {
-      this.tool(
+      this.registerTool(
         tool.method,
-        tool.description,
-        tool.parameters.shape,
-        async (args: any, _extra: RequestHandlerExtra) => {
+        {
+          description: tool.description,
+          inputSchema: tool.parameters.shape,
+        },
+        async (args: any) => {
           try {
             let result;
 
@@ -151,7 +152,7 @@ class KongKonnectMcpServer extends McpServer {
             return {
               content: [
                 {
-                  type: "text",
+                  type: "text" as const,
                   text: JSON.stringify(result, null, 2)
                 }
               ]
@@ -160,7 +161,7 @@ class KongKonnectMcpServer extends McpServer {
             return {
               content: [
                 {
-                  type: "text",
+                  type: "text" as const,
                   text: `Error: ${error.message}\n\nTroubleshooting tips:\n1. Verify your API key is valid and has sufficient permissions\n2. Check that the parameters provided are valid\n3. Ensure your network connection to the Kong API is working properly`
                 }
               ],
