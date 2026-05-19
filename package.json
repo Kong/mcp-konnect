@@ -20,12 +20,12 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.7.0",
-    "axios": "^1.6.2",
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "axios": "^1.16.1",
     "zod": "^3.22.2"
   },
   "devDependencies": {
-    "@types/node": "^20.9.0", 
+    "@types/node": "^20.9.0",
     "typescript": "^5.2.2"
   },
   "engines": {
